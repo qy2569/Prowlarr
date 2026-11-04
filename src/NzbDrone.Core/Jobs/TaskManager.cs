@@ -44,7 +44,7 @@ namespace NzbDrone.Core.Jobs
         public IList<ScheduledTask> GetPending()
         {
             return _cache.Values
-                         .Where(c => c.Interval > 0 && c.LastExecution.AddMinutes(c.Interval) < DateTime.UtcNow)
+                         .Where(c => c.Interval > 0 && GetNextScheduledExecution(c) < DateTime.UtcNow)
                          .ToList();
         }
 
@@ -57,7 +57,27 @@ namespace NzbDrone.Core.Jobs
         {
             var scheduledTask = _cache.Find(type.FullName);
 
-            return scheduledTask.LastExecution.AddMinutes(scheduledTask.Interval);
+            return GetNextScheduledExecution(scheduledTask);
+        }
+
+        private static DateTime GetNextScheduledExecution(ScheduledTask task)
+        {
+            if (task.Interval < 24 * 60)
+            {
+                return task.LastExecution.AddMinutes(task.Interval);
+            }
+
+            var intervalDays = Math.Max(1, task.Interval / (24 * 60));
+            var lastExecutionChinaTime = task.LastExecution.AddHours(8);
+            var nextExecutionChinaTime = lastExecutionChinaTime.Date.AddHours(12);
+
+            if (lastExecutionChinaTime >= nextExecutionChinaTime)
+            {
+                nextExecutionChinaTime = nextExecutionChinaTime.AddDays(intervalDays);
+            }
+
+            // Use China Standard Time (UTC+8), independent of the Docker host timezone.
+            return nextExecutionChinaTime.AddHours(-8);
         }
 
         public void Handle(ApplicationStartedEvent message)
@@ -66,25 +86,25 @@ namespace NzbDrone.Core.Jobs
                 {
                     new ScheduledTask
                     {
-                        Interval = 5,
+                        Interval = 24 * 60,
                         TypeName = typeof(MessagingCleanupCommand).FullName
                     },
 
                     new ScheduledTask
                     {
-                        Interval = 5,
+                        Interval = 24 * 60,
                         TypeName = typeof(ClearExpiredCacheCommand).FullName
                     },
 
                     new ScheduledTask
                     {
-                        Interval = 6 * 60,
+                        Interval = 24 * 60,
                         TypeName = typeof(ApplicationUpdateCheckCommand).FullName
                     },
 
                     new ScheduledTask
                     {
-                        Interval = 6 * 60,
+                        Interval = 24 * 60,
                         TypeName = typeof(CheckHealthCommand).FullName
                     },
 
@@ -108,7 +128,7 @@ namespace NzbDrone.Core.Jobs
 
                     new ScheduledTask
                     {
-                        Interval = 6 * 60,
+                        Interval = 24 * 60,
                         TypeName = typeof(ApplicationIndexerSyncCommand).FullName
                     },
 
