@@ -4,6 +4,9 @@ interface CssExports {
   'actions': string;
   'container': string;
   'content': string;
+  'description': string;
+  'descriptionPopover': string;
+  'descriptionTooltipBody': string;
   'downloadIcon': string;
   'downloadLink': string;
   'indexerRow': string;

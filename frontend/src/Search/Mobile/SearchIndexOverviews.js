@@ -82,7 +82,7 @@ class SearchIndexOverviews extends Component {
   };
 
   calculateGrid = (width = this.state.width, isSmallScreen) => {
-    const rowHeight = 100;
+    const rowHeight = 130;
 
     this.setState({
       width,

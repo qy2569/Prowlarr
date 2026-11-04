@@ -22,8 +22,8 @@ $hoverScale: 1.05;
   display: flex;
   justify-content: space-between;
   flex: 0 0 auto;
-  margin-bottom: 10px;
-  height: 38px;
+  margin-bottom: 4px;
+  height: 20px;
 }
 
 .indexerRow {
@@ -37,9 +37,37 @@ $hoverScale: 1.05;
 .title {
   overflow: hidden;
   width: 85%;
+  min-width: 0;
   font-weight: 500;
   font-size: 14px;
-  overflow-wrap: break-word;
+  white-space: nowrap;
+}
+
+.descriptionPopover {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 5px;
+}
+
+.description {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--textColor);
+  opacity: 0.82;
+  font-size: 13px;
+  line-height: 17px;
+  overflow-wrap: anywhere;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  cursor: pointer;
+}
+
+.descriptionTooltipBody {
+  max-width: 80vw;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .actions {

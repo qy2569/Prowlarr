@@ -6,8 +6,9 @@ import Label from 'Components/Label';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
 import SpinnerIconButton from 'Components/Link/SpinnerIconButton';
+import Popover from 'Components/Tooltip/Popover';
 import DownloadProtocol from 'DownloadClient/DownloadProtocol';
-import { icons, kinds } from 'Helpers/Props';
+import { icons, kinds, tooltipPositions } from 'Helpers/Props';
 import ProtocolLabel from 'Indexer/Index/Table/ProtocolLabel';
 import { IndexerCategory } from 'Indexer/Indexer';
 import OverrideMatchModal from 'Search/OverrideMatch/OverrideMatchModal';
@@ -79,6 +80,7 @@ interface SearchIndexOverviewProps {
   ageMinutes: number;
   publishDate: string;
   title: string;
+  description?: string;
   infoUrl: string;
   downloadUrl?: string;
   magnetUrl?: string;
@@ -110,6 +112,7 @@ function SearchIndexOverview(props: SearchIndexOverviewProps) {
     ageMinutes,
     publishDate,
     title,
+    description,
     infoUrl,
     downloadUrl,
     magnetUrl,
@@ -128,6 +131,7 @@ function SearchIndexOverview(props: SearchIndexOverviewProps) {
     onGrabPress,
   } = props;
 
+  const releaseDescription = description?.trim();
   const [isOverrideModalOpen, setIsOverrideModalOpen] = useState(false);
 
   const { items: downloadClients } = useSelector(
@@ -163,7 +167,7 @@ function SearchIndexOverview(props: SearchIndexOverviewProps) {
             <div className={styles.titleRow}>
               <div className={styles.title}>
                 <Link to={infoUrl} title={title}>
-                  <TextTruncate line={2} text={title} />
+                  <TextTruncate line={1} text={title} />
                 </Link>
               </div>
 
@@ -209,6 +213,27 @@ function SearchIndexOverview(props: SearchIndexOverviewProps) {
                 ) : null}
               </div>
             </div>
+            {releaseDescription ? (
+              <Popover
+                className={styles.descriptionPopover}
+                anchor={
+                  <span
+                    className={styles.description}
+                    title={releaseDescription}
+                  >
+                    {releaseDescription}
+                  </span>
+                }
+                title={translate('Description')}
+                body={
+                  <div className={styles.descriptionTooltipBody}>
+                    {releaseDescription}
+                  </div>
+                }
+                position={tooltipPositions.TOP}
+                canFlip
+              />
+            ) : null}
             <div className={styles.indexerRow}>{indexer}</div>
             <div className={styles.infoRow}>
               <ProtocolLabel protocol={protocol} />
