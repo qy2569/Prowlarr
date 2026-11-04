@@ -18,10 +18,20 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
                                        .When(c => c.TvDirectory.IsNotNullOrWhiteSpace())
                                        .WithMessage("Cannot start with /");
 
+            RuleFor(c => c.MovieDirectory).Matches(@"^(?!/).+")
+                                           .When(c => c.MovieDirectory.IsNotNullOrWhiteSpace())
+                                           .WithMessage("Cannot start with /");
+
+            RuleFor(c => c.XxxDirectory).Matches(@"^(?!/).+")
+                                         .When(c => c.XxxDirectory.IsNotNullOrWhiteSpace())
+                                         .WithMessage("Cannot start with /");
+
             RuleFor(c => c.Category).Matches(@"^\.?[-a-z]*$", RegexOptions.IgnoreCase).WithMessage("Allowed characters a-z and -");
 
             RuleFor(c => c.Category).Empty()
-                                      .When(c => c.TvDirectory.IsNotNullOrWhiteSpace())
+                                      .When(c => c.TvDirectory.IsNotNullOrWhiteSpace() ||
+                                                 c.MovieDirectory.IsNotNullOrWhiteSpace() ||
+                                                 c.XxxDirectory.IsNotNullOrWhiteSpace())
                                       .WithMessage("Cannot use Category and Directory");
         }
     }
@@ -49,13 +59,22 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
         [FieldDefinition(5, Label = "DefaultCategory", Type = FieldType.Textbox, HelpText = "DownloadClientSettingsDefaultCategoryHelpText")]
         public string Category { get; set; }
 
-        [FieldDefinition(6, Label = "Directory", Type = FieldType.Textbox, HelpText = "DownloadClientDownloadStationSettingsDirectoryHelpText")]
+        [FieldDefinition(6, Label = "TvDirectory", Type = FieldType.Textbox, HelpText = "DownloadClientDownloadStationSettingsDirectoryHelpText")]
         public string TvDirectory { get; set; }
+
+        [FieldDefinition(7, Label = "MovieDirectory", Type = FieldType.Textbox, HelpText = "DownloadClientDownloadStationSettingsDirectoryHelpText")]
+        public string MovieDirectory { get; set; }
+
+        [FieldDefinition(8, Label = "XxxDirectory", Type = FieldType.Textbox, HelpText = "DownloadClientDownloadStationSettingsDirectoryHelpText")]
+        public string XxxDirectory { get; set; }
 
         public DownloadStationSettings()
         {
             Host = "127.0.0.1";
             Port = 5000;
+            TvDirectory = "video/TVSeries";
+            MovieDirectory = "video/MOVIE";
+            XxxDirectory = "home/download/vid";
         }
 
         public NzbDroneValidationResult Validate()

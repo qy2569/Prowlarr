@@ -15,6 +15,51 @@
   composes: cell;
 
   flex: 4 0 110px;
+  min-width: 0;
+}
+
+.releaseInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.releaseTitleLink {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.releaseTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.releaseDescriptionPopover {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.releaseDescription {
+  overflow: hidden;
+  color: var(--textColor);
+  opacity: 0.8;
+  font-size: 13px;
+  line-height: 18px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.descriptionTooltipBody {
+  max-width: 70vw;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 
 .indexer,

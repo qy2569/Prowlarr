@@ -61,7 +61,7 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
         {
             var hashedSerialNumber = _serialNumberProvider.GetSerialNumber(Settings);
 
-            DsTaskProxy.AddTaskFromUrl(magnetLink, GetDownloadDirectory(), Settings);
+            DsTaskProxy.AddTaskFromUrl(magnetLink, GetDownloadDirectory(release), Settings);
 
             var item = GetTasks().SingleOrDefault(t => t.Additional.Detail["uri"] == magnetLink);
 
@@ -80,7 +80,7 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
         {
             var hashedSerialNumber = _serialNumberProvider.GetSerialNumber(Settings);
 
-            DsTaskProxy.AddTaskFromData(fileContent, filename, GetDownloadDirectory(), Settings);
+            DsTaskProxy.AddTaskFromData(fileContent, filename, GetDownloadDirectory(release), Settings);
 
             var items = GetTasks().Where(t => t.Additional.Detail["uri"] == Path.GetFileNameWithoutExtension(filename));
 
@@ -181,6 +181,28 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
         {
             try
             {
+                var configuredDirectories = new[]
+                {
+                    (FieldName: nameof(Settings.TvDirectory), Path: Settings.TvDirectory),
+                    (FieldName: nameof(Settings.MovieDirectory), Path: Settings.MovieDirectory),
+                    (FieldName: nameof(Settings.XxxDirectory), Path: Settings.XxxDirectory)
+                }.Where(directory => directory.Path.IsNotNullOrWhiteSpace());
+
+                foreach (var directory in configuredDirectories)
+                {
+                    var failure = TestDirectory(directory.Path, directory.FieldName);
+
+                    if (failure != null)
+                    {
+                        return failure;
+                    }
+                }
+
+                if (configuredDirectories.Any())
+                {
+                    return null;
+                }
+
                 var downloadDir = GetDefaultDir();
 
                 if (downloadDir == null)
@@ -191,30 +213,12 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
                     };
                 }
 
-                downloadDir = GetDownloadDirectory();
+                downloadDir = GetDefaultDownloadDirectory();
 
                 if (downloadDir != null)
                 {
-                    var sharedFolder = downloadDir.Split('\\', '/')[0];
                     var fieldName = Settings.TvDirectory.IsNotNullOrWhiteSpace() ? nameof(Settings.TvDirectory) : nameof(Settings.Category);
-
-                    var folderInfo = _fileStationProxy.GetInfoFileOrDirectory($"/{downloadDir}", Settings);
-
-                    if (folderInfo.Additional == null)
-                    {
-                        return new NzbDroneValidationFailure(fieldName, $"Shared folder does not exist")
-                        {
-                            DetailedDescription = $"The Diskstation does not have a Shared Folder with the name '{sharedFolder}', are you sure you specified it correctly?"
-                        };
-                    }
-
-                    if (!folderInfo.IsDir)
-                    {
-                        return new NzbDroneValidationFailure(fieldName, $"Folder does not exist")
-                        {
-                            DetailedDescription = $"The folder '{downloadDir}' does not exist, it must be created manually inside the Shared Folder '{sharedFolder}'."
-                        };
-                    }
+                    return TestDirectory(downloadDir, fieldName);
                 }
 
                 return null;
@@ -304,13 +308,35 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
             return path;
         }
 
-        protected string GetDownloadDirectory()
+        protected string GetDownloadDirectory(TorrentInfo release)
         {
-            if (Settings.TvDirectory.IsNotNullOrWhiteSpace())
+            var categories = release.Categories;
+
+            if (categories != null && categories.Any(category => category.Name?.Contains("TV", StringComparison.OrdinalIgnoreCase) == true))
             {
-                return Settings.TvDirectory.TrimStart('/');
+                return GetConfiguredOrDefaultDirectory(Settings.TvDirectory);
             }
 
+            if (categories != null && categories.Any(category => category.Name?.Contains("movie", StringComparison.OrdinalIgnoreCase) == true))
+            {
+                return GetConfiguredOrDefaultDirectory(Settings.MovieDirectory);
+            }
+
+            if (categories != null && categories.Any(category => category.Name?.Contains("XXX", StringComparison.OrdinalIgnoreCase) == true))
+            {
+                return GetConfiguredOrDefaultDirectory(Settings.XxxDirectory);
+            }
+
+            return GetDefaultDownloadDirectory();
+        }
+
+        private string GetConfiguredOrDefaultDirectory(string directory)
+        {
+            return directory.IsNotNullOrWhiteSpace() ? directory.TrimStart('/') : GetDefaultDownloadDirectory();
+        }
+
+        private string GetDefaultDownloadDirectory()
+        {
             var destDir = GetDefaultDir();
 
             if (destDir.IsNotNullOrWhiteSpace() && Settings.Category.IsNotNullOrWhiteSpace())
@@ -318,7 +344,31 @@ namespace NzbDrone.Core.Download.Clients.DownloadStation
                 return $"{destDir.TrimEnd('/')}/{Settings.Category}";
             }
 
-            return destDir.TrimEnd('/');
+            return destDir.IsNotNullOrWhiteSpace() ? destDir.TrimEnd('/') : destDir;
+        }
+
+        private ValidationFailure TestDirectory(string downloadDir, string fieldName)
+        {
+            var sharedFolder = downloadDir.Split('\\', '/')[0];
+            var folderInfo = _fileStationProxy.GetInfoFileOrDirectory($"/{downloadDir}", Settings);
+
+            if (folderInfo.Additional == null)
+            {
+                return new NzbDroneValidationFailure(fieldName, "Shared folder does not exist")
+                {
+                    DetailedDescription = $"The Diskstation does not have a Shared Folder with the name '{sharedFolder}', are you sure you specified it correctly?"
+                };
+            }
+
+            if (!folderInfo.IsDir)
+            {
+                return new NzbDroneValidationFailure(fieldName, "Folder does not exist")
+                {
+                    DetailedDescription = $"The folder '{downloadDir}' does not exist, it must be created manually inside the Shared Folder '{sharedFolder}'."
+                };
+            }
+
+            return null;
         }
 
         protected override string AddFromTorrentLink(TorrentInfo release, string hash, string torrentLink)

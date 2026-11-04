@@ -6,6 +6,7 @@ interface Release extends ModelBase {
   categories: IndexerCategory[];
   protocol: string;
   title: string;
+  description?: string;
   sortTitle: string;
   fileName: string;
   infoUrl: string;

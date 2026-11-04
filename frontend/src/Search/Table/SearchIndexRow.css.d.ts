@@ -6,6 +6,7 @@ interface CssExports {
   'category': string;
   'cell': string;
   'checkInput': string;
+  'descriptionTooltipBody': string;
   'downloadIcon': string;
   'downloadLink': string;
   'externalLinks': string;
@@ -17,6 +18,11 @@ interface CssExports {
   'manualDownloadContent': string;
   'peers': string;
   'protocol': string;
+  'releaseDescription': string;
+  'releaseDescriptionPopover': string;
+  'releaseInfo': string;
+  'releaseTitle': string;
+  'releaseTitleLink': string;
   'size': string;
   'sortTitle': string;
 }
