@@ -77,6 +77,7 @@ interface SearchIndexRowProps {
   ageMinutes: number;
   publishDate: string;
   title: string;
+  description?: string;
   fileName: string;
   infoUrl: string;
   downloadUrl?: string;
@@ -117,6 +118,7 @@ function SearchIndexRow(props: SearchIndexRowProps) {
     ageMinutes,
     publishDate,
     title,
+    description,
     fileName,
     infoUrl,
     downloadUrl,
@@ -144,6 +146,7 @@ function SearchIndexRow(props: SearchIndexRowProps) {
     onSavePress,
   } = props;
 
+  const releaseDescription = description?.trim();
   const [isOverrideModalOpen, setIsOverrideModalOpen] = useState(false);
 
   const { items: downloadClients } = useSelector(
@@ -219,9 +222,29 @@ function SearchIndexRow(props: SearchIndexRowProps) {
         if (name === 'sortTitle') {
           return (
             <VirtualTableRowCell key={name} className={styles[name]}>
-              <Link to={infoUrl} title={title}>
-                <div>{title}</div>
-              </Link>
+              <div className={styles.releaseInfo}>
+                <Link className={styles.releaseTitleLink} to={infoUrl} title={title}>
+                  <div className={styles.releaseTitle}>{title}</div>
+                </Link>
+                {releaseDescription ? (
+                  <Popover
+                    className={styles.releaseDescriptionPopover}
+                    anchor={
+                      <span className={styles.releaseDescription} title={releaseDescription}>
+                        {releaseDescription}
+                      </span>
+                    }
+                    title={translate('Description')}
+                    body={
+                      <div className={styles.descriptionTooltipBody}>
+                        {releaseDescription}
+                      </div>
+                    }
+                    position={tooltipPositions.TOP}
+                    canFlip
+                  />
+                ) : null}
+              </div>
             </VirtualTableRowCell>
           );
         }

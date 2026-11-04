@@ -103,7 +103,7 @@ class SearchIndexTable extends Component {
         scrollIndex={this.state.scrollIndex}
         isSmallScreen={isSmallScreen}
         scroller={scroller}
-        rowHeight={38}
+        rowHeight={60}
         overscanRowCount={2}
         rowRenderer={this.rowRenderer}
         header={

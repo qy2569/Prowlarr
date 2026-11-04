@@ -23,6 +23,7 @@ namespace Prowlarr.Api.V1.Search
         public string SubGroup { get; set; }
         public string ReleaseHash { get; set; }
         public string Title { get; set; }
+        public string Description { get; set; }
         public string SortTitle { get; set; }
         public int ImdbId { get; set; }
         public int TmdbId { get; set; }
@@ -84,6 +85,7 @@ namespace Prowlarr.Api.V1.Search
                 IndexerId = releaseInfo.IndexerId,
                 Indexer = releaseInfo.Indexer,
                 Title = releaseInfo.Title,
+                Description = releaseInfo.Description,
                 SortTitle = releaseInfo.Title.NormalizeTitle(),
                 ImdbId = releaseInfo.ImdbId,
                 TmdbId = releaseInfo.TmdbId,
@@ -127,6 +129,7 @@ namespace Prowlarr.Api.V1.Search
 
             model.Guid = resource.Guid;
             model.Title = resource.Title;
+            model.Description = resource.Description;
             model.Size = resource.Size;
             model.DownloadUrl = resource.DownloadUrl;
             model.InfoUrl = resource.InfoUrl;
