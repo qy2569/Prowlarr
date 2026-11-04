@@ -174,7 +174,7 @@ namespace NzbDrone.Core.Configuration
 
         public string BackupFolder => GetValue("BackupFolder", "Backups");
 
-        public int BackupInterval => GetValueInt("BackupInterval", 7);
+        public int BackupInterval => GetValueInt("BackupInterval", 1);
 
         public int BackupRetention => GetValueInt("BackupRetention", 28);
 
