@@ -69,12 +69,7 @@ namespace NzbDrone.Core.Jobs
 
             var intervalDays = Math.Max(1, task.Interval / (24 * 60));
             var lastExecutionChinaTime = task.LastExecution.AddHours(8);
-            var nextExecutionChinaTime = lastExecutionChinaTime.Date.AddHours(12);
-
-            if (lastExecutionChinaTime >= nextExecutionChinaTime)
-            {
-                nextExecutionChinaTime = nextExecutionChinaTime.AddDays(intervalDays);
-            }
+            var nextExecutionChinaTime = lastExecutionChinaTime.Date.AddDays(intervalDays).AddHours(12);
 
             // Use China Standard Time (UTC+8), independent of the Docker host timezone.
             return nextExecutionChinaTime.AddHours(-8);
