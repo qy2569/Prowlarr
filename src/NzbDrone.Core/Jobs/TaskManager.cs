@@ -23,7 +23,7 @@ namespace NzbDrone.Core.Jobs
     {
         IList<ScheduledTask> GetPending();
         List<ScheduledTask> GetAll();
-        DateTime GetNextExecution(Type type);
+        DateTime GetNextExecution(ScheduledTask task);
     }
 
     public class TaskManager : ITaskManager, IHandle<ApplicationStartedEvent>, IHandle<CommandExecutedEvent>, IHandleAsync<ConfigSavedEvent>
@@ -53,11 +53,9 @@ namespace NzbDrone.Core.Jobs
             return _cache.Values.ToList();
         }
 
-        public DateTime GetNextExecution(Type type)
+        public DateTime GetNextExecution(ScheduledTask task)
         {
-            var scheduledTask = _cache.Find(type.FullName);
-
-            return GetNextScheduledExecution(scheduledTask);
+            return GetNextScheduledExecution(task);
         }
 
         private static DateTime GetNextScheduledExecution(ScheduledTask task)

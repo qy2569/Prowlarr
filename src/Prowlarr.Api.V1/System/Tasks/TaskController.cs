@@ -45,7 +45,7 @@ namespace Prowlarr.Api.V1.System.Tasks
             return ConvertToResource(task);
         }
 
-        private static TaskResource ConvertToResource(ScheduledTask scheduledTask)
+        private TaskResource ConvertToResource(ScheduledTask scheduledTask)
         {
             var taskName = scheduledTask.TypeName.Split('.').Last().Replace("Command", "");
 
@@ -57,7 +57,7 @@ namespace Prowlarr.Api.V1.System.Tasks
                 Interval = scheduledTask.Interval,
                 LastExecution = scheduledTask.LastExecution,
                 LastStartTime = scheduledTask.LastStartTime,
-                NextExecution = scheduledTask.LastExecution.AddMinutes(scheduledTask.Interval)
+                NextExecution = _taskManager.GetNextExecution(scheduledTask)
             };
         }
 
