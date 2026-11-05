@@ -105,6 +105,12 @@ export const defaultState = {
       isVisible: true
     },
     {
+      name: 'downloadVolumeFactor',
+      label: () => translate('Discount'),
+      isSortable: false,
+      isVisible: false
+    },
+    {
       name: 'category',
       label: () => translate('Category'),
       isSortable: true,

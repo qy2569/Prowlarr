@@ -4,6 +4,7 @@ interface CssExports {
   'actions': string;
   'age': string;
   'category': string;
+  'downloadVolumeFactor': string;
   'files': string;
   'grabs': string;
   'indexer': string;

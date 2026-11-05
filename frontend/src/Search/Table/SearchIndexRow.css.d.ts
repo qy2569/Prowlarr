@@ -9,6 +9,7 @@ interface CssExports {
   'descriptionTooltipBody': string;
   'downloadIcon': string;
   'downloadLink': string;
+  'downloadVolumeFactor': string;
   'externalLinks': string;
   'files': string;
   'grabs': string;

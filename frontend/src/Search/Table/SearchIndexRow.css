@@ -73,7 +73,8 @@
 .size,
 .files,
 .grabs,
-.peers {
+.peers,
+.downloadVolumeFactor {
   composes: cell;
 
   flex: 0 0 75px;

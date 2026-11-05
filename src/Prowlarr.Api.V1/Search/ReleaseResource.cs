@@ -35,6 +35,7 @@ namespace Prowlarr.Api.V1.Search
         public string InfoUrl { get; set; }
         public string PosterUrl { get; set; }
         public IEnumerable<string> IndexerFlags { get; set; }
+        public double? DownloadVolumeFactor { get; set; }
         public ICollection<IndexerCategory> Categories { get; set; }
 
         public string MagnetUrl { get; set; }
@@ -104,7 +105,8 @@ namespace Prowlarr.Api.V1.Search
                 Seeders = torrentInfo.Seeders,
                 Leechers = (torrentInfo.Peers.HasValue && torrentInfo.Seeders.HasValue) ? (torrentInfo.Peers.Value - torrentInfo.Seeders.Value) : (int?)null,
                 Protocol = releaseInfo.DownloadProtocol,
-                IndexerFlags = indexerFlags
+                IndexerFlags = indexerFlags,
+                DownloadVolumeFactor = torrentInfo.DownloadVolumeFactor
             };
         }
 

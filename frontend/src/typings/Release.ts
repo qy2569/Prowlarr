@@ -24,6 +24,7 @@ interface Release extends ModelBase {
   seeders?: number;
   leechers?: number;
   indexerFlags: string[];
+  downloadVolumeFactor?: number;
 }
 
 export default Release;

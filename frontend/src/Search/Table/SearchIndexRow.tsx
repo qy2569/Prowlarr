@@ -21,6 +21,7 @@ import formatBytes from 'Utilities/Number/formatBytes';
 import titleCase from 'Utilities/String/titleCase';
 import translate from 'Utilities/String/translate';
 import CategoryLabel from './CategoryLabel';
+import DiscountLabel from './DiscountLabel';
 import Peers from './Peers';
 import ReleaseLinks from './ReleaseLinks';
 import styles from './SearchIndexRow.css';
@@ -90,6 +91,7 @@ interface SearchIndexRowProps {
   grabs?: number;
   seeders?: number;
   leechers?: number;
+  downloadVolumeFactor?: number;
   imdbId?: string;
   tmdbId?: number;
   tvdbId?: number;
@@ -129,6 +131,7 @@ function SearchIndexRow(props: SearchIndexRowProps) {
     grabs,
     seeders,
     leechers,
+    downloadVolumeFactor,
     imdbId,
     tmdbId,
     tvdbId,
@@ -287,6 +290,14 @@ function SearchIndexRow(props: SearchIndexRowProps) {
               {protocol === 'torrent' && (
                 <Peers seeders={seeders} leechers={leechers} />
               )}
+            </VirtualTableRowCell>
+          );
+        }
+
+        if (name === 'downloadVolumeFactor') {
+          return (
+            <VirtualTableRowCell key={name} className={styles[name]}>
+              <DiscountLabel downloadVolumeFactor={downloadVolumeFactor} />
             </VirtualTableRowCell>
           );
         }

@@ -13,6 +13,7 @@ import ProtocolLabel from 'Indexer/Index/Table/ProtocolLabel';
 import { IndexerCategory } from 'Indexer/Indexer';
 import OverrideMatchModal from 'Search/OverrideMatch/OverrideMatchModal';
 import CategoryLabel from 'Search/Table/CategoryLabel';
+import DiscountLabel from 'Search/Table/DiscountLabel';
 import Peers from 'Search/Table/Peers';
 import createEnabledDownloadClientsSelector from 'Store/Selectors/createEnabledDownloadClientsSelector';
 import dimensions from 'Styles/Variables/dimensions';
@@ -90,6 +91,7 @@ interface SearchIndexOverviewProps {
   size: number;
   seeders?: number;
   leechers?: number;
+  downloadVolumeFactor?: number;
   indexerFlags: string[];
   isGrabbing: boolean;
   isGrabbed: boolean;
@@ -120,6 +122,7 @@ function SearchIndexOverview(props: SearchIndexOverviewProps) {
     size,
     seeders,
     leechers,
+    downloadVolumeFactor,
     indexerFlags = [],
     isGrabbing = false,
     isGrabbed = false,
@@ -240,6 +243,10 @@ function SearchIndexOverview(props: SearchIndexOverviewProps) {
 
               {protocol === 'torrent' && (
                 <Peers seeders={seeders} leechers={leechers} />
+              )}
+
+              {protocol === 'torrent' && (
+                <DiscountLabel downloadVolumeFactor={downloadVolumeFactor} />
               )}
 
               <Label>{formatBytes(size)}</Label>
